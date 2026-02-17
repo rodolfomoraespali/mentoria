@@ -3,6 +3,7 @@ const LINKS = {
   whatsapp: "https://wa.me/5516981902048",
   instagram: "https://instagram.com/rodolfomoraespali"
 };
+
 const slides = document.querySelectorAll(".testimonial-slide");
 const indicators = document.querySelectorAll(".indicator");
 const nextBtn = document.querySelector(".carousel-btn.next");
@@ -12,6 +13,17 @@ let startX = 0;
 let endX = 0;
 
 function $(q){ return document.querySelector(q); }
+
+function init() {
+  wireLinks();
+  wireForm();
+  updateYear();
+}
+
+function updateYear() {
+  const yearEl = $("#year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+}
 
 function showToast(msg){
   const toast = $("#toast");
@@ -99,40 +111,48 @@ function wireForm(){
 }
 
 function showSlide(index){
+  if (!slides.length) return;
   slides.forEach(slide => slide.classList.remove("active"));
   indicators.forEach(dot => dot.classList.remove("active"));
 
   slides[index].classList.add("active");
   indicators[index].classList.add("active");
 }
+
 function nextSlide(){
   currentSlide = (currentSlide + 1) % slides.length;
   showSlide(currentSlide);
 }
+
 function prevSlide(){
   currentSlide = (currentSlide - 1 + slides.length) % slides.length;
   showSlide(currentSlide);
 }
+
 if(nextBtn) nextBtn.addEventListener("click", nextSlide);
 if(prevBtn) prevBtn.addEventListener("click", prevSlide);
+
 indicators.forEach(indicator => {
   indicator.addEventListener("click", (e) => {
     currentSlide = parseInt(e.target.dataset.slide);
     showSlide(currentSlide);
   });
 });
+
 const carousel = document.querySelector(".carousel-track");
-carousel.addEventListener("touchstart", (e) => {
-  startX = e.touches[0].clientX;
-});
-carousel.addEventListener("touchend", (e) => {
-  endX = e.changedTouches[0].clientX;
-  if(startX - endX > 50){
-    nextSlide();
-  }
-  if(endX - startX > 50){
-    prevSlide();
-  }
-});
+if(carousel) {
+  carousel.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+  });
+  carousel.addEventListener("touchend", (e) => {
+    endX = e.changedTouches[0].clientX;
+    if(startX - endX > 50){
+      nextSlide();
+    }
+    if(endX - startX > 50){
+      prevSlide();
+    }
+  });
+}
 
 document.addEventListener("DOMContentLoaded", init);
